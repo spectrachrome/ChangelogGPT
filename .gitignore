@@ -1,3 +1,4 @@
 # Do not commit secrets or editor data to the repository.
 .env
 .vscode
+node_modules/
