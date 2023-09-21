@@ -38,7 +38,7 @@ const generateChangelog = async () => {
 
         const chatCompletion = await openai.chat.completions.create({
             messages: [{ role: 'user', content }],
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4',
             temperature: 0.3,
         })
         //const changelog = chatCompletion.choices && chatCompletion.choices[0] && chatCompletion.choices[0].text.trim()
