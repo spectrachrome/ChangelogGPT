@@ -3,22 +3,18 @@ import he from 'he'
 import fs from 'fs'
 import Handlebars from 'handlebars'
 import OpenAI from 'openai'
+import express from 'express'
 
 dotenv.config()
 
-const GITHUB_TOKEN   = process.env.GITHUB_TOKEN
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY
-
+// The SDK uses the OPENAI_API_KEY environment variable by default
 const openai = new OpenAI();
+const app = express();
 
-// Replace with your desired repository and PR ID
-const repo = 'EOX-A/EOxElements'
-const prID = '186'
+app.get('/generate/:org/:repo/:prID', async (req, res) => {
+    const { org, repo, prID } = req.params
+    const githubUrl = `https://api.github.com/repos/${org}/${repo}/pulls/${prID}`
 
-const githubUrl = `https://api.github.com/repos/${repo}/pulls/${prID}`
-const openaiUrl = 'https://api.openai.com/v1/engines/gpt-3.5-turbo/completions'
-
-const generateChangelog = async () => {
     try {
         // Fetch relevant data about the pull request from the GitHub API
         const prRes  = await get(githubUrl)
@@ -41,18 +37,19 @@ const generateChangelog = async () => {
             model: 'gpt-4',
             temperature: 0.2,
         })
-        //const changelog = chatCompletion.choices && chatCompletion.choices[0] && chatCompletion.choices[0].text.trim()
 
-        console.log(chatCompletion.choices[0].message.content)
+        res.send(chatCompletion.choices[0].message.content);
     } catch (error) {
         console.error('Error generating changelog:', error.message || error)
     }
-}
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
 
 async function get(url) {
     const res = await fetch(url, {
         headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Authorization': `token ${process.env.GITHUB_TOKEN}`,
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': 'ChangelogGPT',
         }
@@ -69,7 +66,3 @@ function buildPrompt(title, diffs, commits) {
     // Since Handlebars escapes its output by default, we need to decode the HTML entities
     return he.decode(template(data))
 }
-
-
-// Run the generateChangelog function
-generateChangelog()
