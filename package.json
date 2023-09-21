@@ -1,0 +1,19 @@
+{
+  "name": "changelog-gpt",
+  "version": "0.1.0",
+  "description": "Auto-generate human-readable changelogs from GitHub pull requests",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Moritz Riede <moritz@mriede.com>",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "handlebars": "^4.7.8",
+    "he": "^1.2.0",
+    "openai": "^4.10.0"
+  }
+}
